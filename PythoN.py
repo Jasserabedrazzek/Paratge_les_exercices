@@ -1,29 +1,24 @@
 import streamlit as st
 import json
 
-# Define a function to serialize the uploaded file metadata to a JSON string
-def serialize_file_metadata(file):
-    return {
-        "name": file.name,
-        "type": file.type,
-        "size": file.size,
-    }
-
-# Define the Streamlit app
-def main():
-    # Create a file uploader in the Streamlit app
+# Create a form for file upload
+with st.form("File Upload"):
     uploaded_file = st.file_uploader("Choose a file")
 
-    # If a file has been uploaded, serialize its metadata and save it to a JSON file
-    if uploaded_file is not None:
-        metadata = serialize_file_metadata(uploaded_file)
-        with open("uploaded_files.json", "a") as f:
-            json.dump(metadata, f)
-            f.write("\n")
+    # Add a submit button
+    submit_button = st.form_submit_button(label='Submit')
 
-        # Display the uploaded file's metadata
-        st.write("Metadata:", metadata)
+# When the form is submitted
+if submit_button and uploaded_file is not None:
+    # Read the contents of the file
+    file_contents = uploaded_file.read()
 
-# Run the Streamlit app
-if __name__ == "__main__":
-    main()
+    # Process the file contents and create a JSON object
+    json_data = {'file_name': uploaded_file.name, 'file_data': file_contents.decode('utf-8')}
+
+    # Save the JSON object to a file
+    with open('file_data.json', 'w') as f:
+        json.dump(json_data, f)
+
+    # Display the JSON data in the Streamlit app
+    st.write('JSON Data:', json_data)
