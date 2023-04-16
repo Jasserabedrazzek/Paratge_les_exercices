@@ -1,18 +1,22 @@
 import streamlit as st
+import requests
 
-# Upload file
-uploaded_file = st.file_uploader("Choose a file")
+# Create a file uploader widget
+file = st.file_uploader("Upload a file", type=["txt", "pdf", "png", "jpg"])
 
-# If file is uploaded
-if uploaded_file is not None:
-    # Get file content as bytes
-    file_content = uploaded_file.read()
-    # Display file content
-    st.write(file_content)
-    # Create download button
-    st.download_button(
-        label="Download file",
-        data=file_content,
-        file_name="uploaded_file.txt",
-        mime="text/plain"
-    )
+# Check if a file has been uploaded
+if file is not None:
+    # Display the file details
+    st.write("File details:")
+    st.write(file.name)
+    st.write(file.type)
+    st.write(file.size)
+    
+    # Send the file to the server
+    url = "http://example.com/upload"
+    files = {"file": file.getvalue()}
+    response = requests.post(url, files=files)
+    
+    # Display the response from the server
+    st.write("Server response:")
+    st.write(response.text)
